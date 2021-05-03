@@ -1,0 +1,3 @@
+NAME=mxmp
+SOURCE=main.c
+FLAGS='-lxmp -lpulse-simple -lcurses'

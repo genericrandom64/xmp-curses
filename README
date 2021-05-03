@@ -1,0 +1,13 @@
+# xmp-curses
+
+libxmp frontend that uses curses and pulseaudio.
+
+## keybinds
+
+L - Loop module
+
+Space - Play/Pause
+
+## license (or rather unlicense)
+
+if for some reason you actually *want* this code, it is public domain under the unlicense

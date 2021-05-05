@@ -3,11 +3,15 @@
 #include <libgen.h>
 #include <xmp.h>
 #include <pulse/simple.h>
+#include <stdint.h>
+#include <getopt.h>
 #include <curses.h>
 
+// TODO move all strings to this file
+#include "lang/en-us.h"
 
 #define SAMPLE_RATE 44100
-#define MODULE argv[1] //"/mnt/en/generic/rt/world_of_plastic.s3m"
+#define MODULE argv[optind]
 
 void die(char * msg, int ret) {
 	clear();
@@ -19,17 +23,63 @@ void die(char * msg, int ret) {
 
 int main(int argc, char **argv) {
 
-	if(argc < 2) die("argv[1] must be a module name\n", 1);
+	char statusbar[20];
 
-	char statusbar[16];
-	char* buffer = malloc(SAMPLE_RATE);
-	int input, pause = 0, loop = 1, exit = 0;
+	// this can go back once proper exit is
+	// ready in case some platform doesnt
+	// properly deallocate heap memory 
+	//char* buffer = malloc(SAMPLE_RATE);
+	char buffer[SAMPLE_RATE];
+	
+	int opt, sep = 70, player_flags = 0, input = 0, loop = 1, interp = XMP_INTERP_LINEAR;
+	uint8_t pause = 0, exit = 0;
 	
 	// set up libxmp
 	xmp_context c = xmp_create_context();
 	struct xmp_frame_info frame_info;
-	if(xmp_load_module(c, MODULE) != 0) die("Could not load module.\n", 1);
-	xmp_start_player(c, SAMPLE_RATE, 0);
+	struct xmp_module_info module_info;
+	
+	while((opt = getopt(argc, argv, ":i:s:lm8u")) != -1) {
+		switch(opt) {
+			
+			/* use these flags if you hate yourself and want to die
+			 * todo make this work with pulseaudio
+			 * and also every future backend
+			case 'm':
+				player_flags = player_flags|XMP_FORMAT_MONO;
+				break;
+			case '8':
+				player_flags = player_flags|XMP_FORMAT_8BIT;
+				break;
+			case 'u':
+				player_flags = player_flags|XMP_FORMAT_UNSIGNED;
+				break;
+			*/
+
+			case 'l':
+				loop = 0;
+				break;
+			case 's':
+				sep = atoi(optarg);
+				if(sep <= 0 && sep >= 100) { sep = 70; }
+				break;
+			case 'i':
+				if(strcmp(optarg, XMPCURSES_NEAREST) == 0) interp = XMP_INTERP_NEAREST;
+				if(strcmp(optarg, XMPCURSES_SPLINE) == 0) interp = XMP_INTERP_SPLINE;
+				break;
+			case 'h':
+				printf(XMPCURSES_HELP);
+				break;
+			case '?':
+				printf(XMPCURSES_UNKNOWN_ARG, optopt);
+				break;
+		}
+	}
+	if(xmp_load_module(c, MODULE) != 0) die(XMPCURSES_LOAD_FAIL, 1);
+	xmp_get_module_info(c, &module_info);
+	xmp_start_player(c, SAMPLE_RATE, player_flags);
+	xmp_set_player(c, XMP_PLAYER_INTERP, interp);
+	xmp_set_player(c, XMP_PLAYER_MIX, sep);
 	// libxmp setup done
 
 	// set up pulse backend
@@ -40,7 +90,8 @@ int main(int argc, char **argv) {
 	ss.channels = 2;
 	ss.rate = SAMPLE_RATE;
 
-	s = pa_simple_new(NULL, "xmp clone", PA_STREAM_PLAYBACK, NULL, basename(MODULE), &ss, NULL, NULL, NULL);
+	s = pa_simple_new(NULL, XMPCURSES, PA_STREAM_PLAYBACK, NULL,
+	basename(MODULE), &ss, NULL, NULL, NULL);
 	// pulse setup done
 
 	// set up ncurses
@@ -63,7 +114,7 @@ int main(int argc, char **argv) {
 					break;
 
 				case 0-XMP_ERROR_STATE:
-					die("Internal error\n", 1);
+					die(XMPCURSES_INT_ERR, 1);
 					break;
 
 			}
@@ -81,6 +132,7 @@ int main(int argc, char **argv) {
 
 		switch(input) {
 		
+			// TODO localize
 			case 113:
 				// waiting to see this on r/badcode
 				exit = 1;
@@ -96,7 +148,17 @@ int main(int argc, char **argv) {
 		
 		}
 		
-		sprintf(statusbar, "%c%c", pause ? 'P' : ' ', loop ? ' ' : 'L');
+		sprintf(statusbar,
+			"%c%c\n%02d:%02d:%02d",
+			pause ? XMPCURSES_STATUS_PAUSE : ' ',
+			loop ? ' ' : XMPCURSES_STATUS_LOOP,
+
+			// time into module
+			(int)((frame_info.time / 100) / (60 * 600)),
+			(int)(((frame_info.time / 100) / 600) % 60),
+			(int)(((frame_info.time / 100) / 10) % 60)
+
+			);
 		mvaddstr(0, 0, statusbar);
 		if(exit == 1) break;
 

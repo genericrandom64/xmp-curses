@@ -2,18 +2,18 @@
 #include <stdio.h>
 #include <libgen.h>
 #include <xmp.h>
-#include <pulse/simple.h>
 #include <stdint.h>
 #include <getopt.h>
 #include <curses.h>
-
-// TODO move all strings to this file
-#include "lang/en-us.h"
+#include <string.h>
 
 #define SAMPLE_RATE 44100
 #define MODULE argv[optind]
 
+#include "config.h"
+
 void die(char * msg, int ret) {
+	// TODO free audio
 	clear();
 	refresh();
 	endwin();
@@ -82,17 +82,7 @@ int main(int argc, char **argv) {
 	xmp_set_player(c, XMP_PLAYER_MIX, sep);
 	// libxmp setup done
 
-	// set up pulse backend
-	pa_simple *s;
-	pa_sample_spec ss;
-	 
-	ss.format = PA_SAMPLE_S16NE;
-	ss.channels = 2;
-	ss.rate = SAMPLE_RATE;
-
-	s = pa_simple_new(NULL, XMPCURSES, PA_STREAM_PLAYBACK, NULL,
-	basename(MODULE), &ss, NULL, NULL, NULL);
-	// pulse setup done
+	backend_init;
 
 	// set up ncurses
 	initscr();
@@ -124,7 +114,7 @@ int main(int argc, char **argv) {
 			// change this
 			if(exit == 1) break;
 
-			pa_simple_write(s, buffer, SAMPLE_RATE, 0);
+			backend_write;
 
 		}
 
@@ -168,7 +158,8 @@ int main(int argc, char **argv) {
 	xmp_end_player(c);
 	xmp_release_module(c);
 	xmp_free_context(c);
-	pa_simple_free(s);
+
+	backend_free;
 
 	// we are done with ncurses
 	clear();

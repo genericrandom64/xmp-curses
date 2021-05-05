@@ -1,3 +1,8 @@
 NAME=xmp-curses
 SOURCE=main.c
-FLAGS='-lxmp -lpulse-simple -lcurses'
+FLAGS="-lxmp -lcurses"
+
+
+[ "$(uname)" = "Linux" ] && FLAGS="$FLAGS -lpulse-simple"
+
+[ "$(uname)" = "OpenBSD" ] && FLAGS="$FLAGS -lsndio"

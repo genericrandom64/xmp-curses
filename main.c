@@ -87,14 +87,8 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	// value to keep the original state of optind
 	tracknum = optind;
-	
-	/*if(xmp_load_module(c, MODULE) != 0) die(XMPCURSES_LOAD_FAIL, 1);
-	xmp_get_module_info(c, &module_info);
-	xmp_start_player(c, SAMPLE_RATE, player_flags);
-	xmp_set_player(c, XMP_PLAYER_INTERP, interp);
-	xmp_set_player(c, XMP_PLAYER_MIX, sep);*/
-	// libxmp setup done
 
 	backend_init;
 
@@ -105,15 +99,16 @@ int main(int argc, char **argv) {
 	clear();
 	curs_set(0);
 	halfdelay(1);
-	//nodelay(stdscr, 1);
 	// ncurses setup done
 
 	while(optind < argc) {
+	
 	if(xmp_load_module(c, MODULE) != 0) die(XMPCURSES_LOAD_FAIL, 1);
 	xmp_get_module_info(c, &module_info);
 	xmp_start_player(c, SAMPLE_RATE, player_flags);
 	xmp_set_player(c, XMP_PLAYER_INTERP, interp);
 	xmp_set_player(c, XMP_PLAYER_MIX, sep);
+
 	// player loop
 	while(1) {
 
@@ -128,7 +123,7 @@ int main(int argc, char **argv) {
 					die(XMPCURSES_INT_ERR, 1);
 					break;
 
-			}
+		}
 
 			// if you do not have this line you will *suffer*
 			xmp_get_frame_info(c, &frame_info);
@@ -144,31 +139,31 @@ int main(int argc, char **argv) {
 		switch(input) {
 		
 			// TODO localize
-			case 'q'://113
+			case XMPCURSES_QUIT://113
 				// waiting to see this on r/badcode
 				exit = 1;
 				break;
-			case ' ':
+			case XMPCURSES_PAUSE:
 				if(pause == 0) pause = 1;
 				else pause = 0;
 				break;
-			case 'L':
+			case XMPCURSES_LOOP:
 				if(loop == 0) loop = frame_info.loop_count + 1;
 				else loop = 0;
 				break;
-			case 'h':
+			case XMPCURSES_POS_PREV:
 				xmp_prev_position(c);
 				break;
-			case 'j':
+			case XMPCURSES_MOD_PREV:
 				// hacky function
 				optind -= 2;
 				if(optind < tracknum) optind = (tracknum-1); // subtract 1 because loop increments optind
 				exitloop = 1;
 				break;
-			case 'k':
+			case XMPCURSES_MOD_NEXT:
 				exitloop = 1;
 				break;
-			case 'l':
+			case XMPCURSES_POS_NEXT:
 				xmp_next_position(c);
 				break;
 				
@@ -186,15 +181,19 @@ int main(int argc, char **argv) {
 			(int)((frame_info.time / 100) / (60 * 600)),
 			(int)(((frame_info.time / 100) / 600) % 60),
 			(int)(((frame_info.time / 100) / 10) % 60)
-			);
+		);
+
 		mvaddstr(0, 0, statusbar);
 		refresh();
+		
 		if(exitloop == 1 || exit == 1) break;
 
 	}
+
 	optind++;
 	exitloop = 0;
 	if(exit == 1) break;
+	
 	}
 
 	// we are done, free stuff

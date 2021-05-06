@@ -3,8 +3,16 @@
 
 // choose a backend
 // the first one defined will be used
-//
-// -lpulse-simple
 #include "backend/pulseaudio.h"
-// -lsndio
-// #include "backend/sndio.h"
+
+#define XMPCURSES_QUIT 'q'
+
+#define XMPCURSES_PAUSE ' '
+
+#define XMPCURSES_LOOP 'L'
+
+#define XMPCURSES_MOD_NEXT 'k'
+#define XMPCURSES_MOD_PREV 'j'
+
+#define XMPCURSES_POS_NEXT 'l'
+#define XMPCURSES_POS_PREV 'h'

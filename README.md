@@ -1,25 +1,35 @@
 # xmp-curses
 
-libxmp frontend that uses curses and pulseaudio.
+libxmp frontend that uses curses.
 
 ## ui
 
 ```
- L
+PL
 00:01:19
 ```
 
+P - displayed when player is paused
+
+L - displayed when loop is on
+
 ## keybinds
 
-q - Quit xmp-curses
+q - quit xmp-curses
 
-L - Loop module
+L - loop module
 
 j/k - select module
 
 h/l - rewind/forward
 
-Space - Play/Pause
+space - play/pause
+
+## backends
+
+pulseaudio - `backend/pulseaudio.h`, link `-lpulse-simple`. tested on linux
+
+sndio - `backend/sndio.h`, link `-lsndio`. tested on openbsd
 
 ## cli arguments
 
@@ -31,6 +41,18 @@ Space - Play/Pause
 
 -l - Loop
 
+## future plans
+
+- audio backend for freebsd
+
+- audio backend using a library (macos and windows)
+
+- playlists
+
+- modules/playlists loaded from stdin
+
+- full tui
+
 ## license (or rather unlicense)
 
-if for some reason you actually *want* this code, it is public domain under the unlicense
+if for some reason you actually *want* this code, it is public domain under the unlicense. if this changes, it will remain permissively licensed.

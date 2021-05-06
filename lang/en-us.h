@@ -1,3 +1,6 @@
+#ifndef XC_LANG
+#define XC_LANG
+
 #define XMPCURSES "xmp-curses"
 #define XMPCURSES_HELP ""
 #define XMPCURSES_NOFILE "Please provide a module file.\n"
@@ -8,3 +11,5 @@
 #define XMPCURSES_INT_ERR "Internal error\n"
 #define XMPCURSES_STATUS_PAUSE 'P'
 #define XMPCURSES_STATUS_LOOP 'L'
+
+#endif

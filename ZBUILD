@@ -1,6 +1,6 @@
 NAME=xmp-curses
 SOURCE=main.c
-FLAGS="-lxmp -lcurses"
+FLAGS="-O3 -flto -lxmp -lcurses"
 
 
 [ "$(uname)" = "Linux" ] && FLAGS="$FLAGS -lpulse-simple"

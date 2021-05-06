@@ -11,9 +11,13 @@ libxmp frontend that uses curses and pulseaudio.
 
 ## keybinds
 
-Q - Quit xmp-curses
+q - Quit xmp-curses
 
 L - Loop module
+
+j/k - select module
+
+h/l - rewind/forward
 
 Space - Play/Pause
 
@@ -22,6 +26,8 @@ Space - Play/Pause
 -h - Help
 
 -i [nearest|spline] - Change default interpolation (linear) to one of these
+
+-s [0-100] - stereo separation in percent
 
 -l - Loop
 

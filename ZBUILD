@@ -5,4 +5,4 @@ FLAGS="-O3 -flto -lxmp -lcurses"
 
 [ "$(uname)" = "Linux" ] && FLAGS="$FLAGS -lpulse-simple"
 
-[ "$(uname)" = "OpenBSD" ] && FLAGS="$FLAGS -lsndio"
+[ "$(uname)" = "OpenBSD" ] && FLAGS="$FLAGS -lsndio -L/usr/local/lib -I/usr/local/include"

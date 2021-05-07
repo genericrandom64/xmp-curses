@@ -43,13 +43,11 @@ sndio - `backend/sndio.h`, link `-lsndio`. tested on openbsd
 
 ## future plans
 
-- audio backend for freebsd
+- audio backend for freebsd (oss?)
 
 - audio backend using a library (macos and windows)
 
-- playlists
-
-- modules/playlists loaded from stdin
+- playlists as argument or loaded from stdin (modules dont seem to load from stdin)
 
 - full tui
 

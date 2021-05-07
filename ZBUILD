@@ -1,8 +1,11 @@
 NAME=xmp-curses
 SOURCE=main.c
-FLAGS="-O3 -flto -lxmp -lcurses"
+FLAGS="-O3 -lxmp -lcurses"
 
 
-[ "$(uname)" = "Linux" ] && FLAGS="$FLAGS -lpulse-simple"
+[ "$(uname)" = "Linux" ] && FLAGS="$FLAGS -lpulse-simple -flto"
 
+# openbsd clang doesnt like lto for whatever reason
+# set up /usr/local flags and default to sndio.
+# TODO create conf generator
 [ "$(uname)" = "OpenBSD" ] && FLAGS="$FLAGS -lsndio -L/usr/local/lib -I/usr/local/include"

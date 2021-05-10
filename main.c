@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 	char buffer[SAMPLE_RATE];
 	
 	int opt, player_flags = 0, input = 0, loop = 1, interp = XMP_INTERP_LINEAR, tracknum = 1;
-	uint8_t sep = 70, pause = 0, exitloop = 0, exit = 0, loop_playlist = 0;
+	uint8_t sep = 70, pause = 0, exitloop = 0, iexit = 0, loop_playlist = 0;
 	
 	// set up libxmp
 	
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 	struct xmp_module_info module_info;
 
 	
-	while((opt = getopt(argc, argv, ":i:s:Llm8u")) != -1) {
+	while((opt = getopt(argc, argv, ":i:s:Llhm8u")) != -1) {
 		switch(opt) {
 			
 			/* use these flags if you hate yourself and want to die
@@ -83,6 +83,7 @@ int main(int argc, char **argv) {
 				break;
 			case 'h':
 				printf(XMPCURSES_HELP);
+				exit(0);
 				break;
 			case '?':
 				printf(XMPCURSES_UNKNOWN_ARG, optopt);
@@ -145,7 +146,7 @@ player_loop:
 			// TODO localize
 			case XMPCURSES_QUIT://113
 				// waiting to see this on r/badcode
-				exit = 1;
+				iexit = 1;
 				break;
 			case XMPCURSES_PAUSE:
 				if(pause == 0) pause = 1;
@@ -195,16 +196,16 @@ player_loop:
 		mvaddstr(0, 0, statusbar);
 		refresh();
 		
-		if(exitloop == 1 || exit == 1) break;
+		if(exitloop == 1 ||  iexit == 1) break;
 
 	}
 
 	optind++;
 	exitloop = 0;
-	if(exit == 1) break;
+	if(iexit == 1) break;
 	
 	}
-	if(loop_playlist == 1 && exit != 1) { optind = tracknum; goto player_loop;}
+	if(loop_playlist == 1 && iexit != 1) { optind = tracknum; goto player_loop;}
 
 	// we are done, free stuff
 	xmp_end_player(c);

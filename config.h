@@ -1,15 +1,19 @@
 // choose a language
+// the first one defined will be used
 #include "lang/en-us.h"
 
 // choose a backend
 // the first one defined will be used
 #include "backend/pulseaudio.h"
 
+// keybinds
+
 #define XMPCURSES_QUIT 'q'
 
 #define XMPCURSES_PAUSE ' '
 
 #define XMPCURSES_LOOP 'L'
+#define XMPCURSES_LOOP_PLAYLIST 'R'
 
 #define XMPCURSES_MOD_NEXT 'k'
 #define XMPCURSES_MOD_PREV 'j'

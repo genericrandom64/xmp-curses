@@ -5,19 +5,23 @@ libxmp frontend that uses curses.
 ## ui
 
 ```
-PL
+PLR
 00:01:19
 ```
 
 P - displayed when player is paused
 
-L - displayed when loop is on
+L - displayed when single module loop is on
+
+R - displayed when all module loop is on
 
 ## keybinds
 
 q - quit xmp-curses
 
 L - loop module
+
+R - loop all modules
 
 j/k - select module
 
@@ -27,19 +31,21 @@ space - play/pause
 
 ## backends
 
-pulseaudio - `backend/pulseaudio.h`, link `-lpulse-simple`. tested on linux
+pulseaudio - `backend/pulseaudio.h`, link `-lpulse-simple`, tested on linux
 
-sndio - `backend/sndio.h`, link `-lsndio`. tested on openbsd
+sndio - `backend/sndio.h`, link `-lsndio`, tested on openbsd
 
 ## cli arguments
 
--h - Help
+-h - show help message
 
--i [nearest|spline] - Change default interpolation (linear) to one of these
+-i [nearest|spline] - hhange default interpolation (linear) to one of these
 
 -s [0-100] - stereo separation in percent
 
--l - Loop
+-l - loop over one module
+
+-R - loop over all modules selected
 
 ## future plans
 
@@ -47,7 +53,7 @@ sndio - `backend/sndio.h`, link `-lsndio`. tested on openbsd
 
 - audio backend using a library (macos and windows)
 
-- playlists as argument or loaded from stdin (modules dont seem to load from stdin)
+- playlist files as argument or loaded from stdin (modules dont seem to load from stdin)
 
 - full tui
 

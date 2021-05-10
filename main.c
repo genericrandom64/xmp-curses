@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 	char buffer[SAMPLE_RATE];
 	
 	int opt, player_flags = 0, input = 0, loop = 1, interp = XMP_INTERP_LINEAR, tracknum = 1;
-	uint8_t sep = 70, pause = 0, exitloop = 0, exit = 0;
+	uint8_t sep = 70, pause = 0, exitloop = 0, exit = 0, loop_playlist = 0;
 	
 	// set up libxmp
 	
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 	struct xmp_module_info module_info;
 
 	
-	while((opt = getopt(argc, argv, ":i:s:lm8u")) != -1) {
+	while((opt = getopt(argc, argv, ":i:s:Llm8u")) != -1) {
 		switch(opt) {
 			
 			/* use these flags if you hate yourself and want to die
@@ -67,6 +67,9 @@ int main(int argc, char **argv) {
 				break;
 			*/
 
+			case 'R':
+				loop_playlist = 1;
+				break;
 			case 'l':
 				loop = 0;
 				break;
@@ -110,6 +113,7 @@ int main(int argc, char **argv) {
 	xmp_set_player(c, XMP_PLAYER_MIX, sep);
 
 	// player loop
+player_loop:
 	while(1) {
 
 		if(pause == 0) { 
@@ -166,6 +170,10 @@ int main(int argc, char **argv) {
 			case XMPCURSES_POS_NEXT:
 				xmp_next_position(c);
 				break;
+			case XMPCURSES_LOOP_PLAYLIST:
+				if(loop_playlist == 0) loop_playlist = 1;
+				else loop_playlist = 0;
+				break;
 				
 			/*default:
 				printf("\n%i\n", input);*/
@@ -173,9 +181,10 @@ int main(int argc, char **argv) {
 		}
 		
 		sprintf(statusbar,
-			"%c%c\n%02d:%02d:%02d",
+			"%c%c%c\n%02d:%02d:%02d",
 			pause ? XMPCURSES_STATUS_PAUSE : ' ',
 			loop ? ' ' : XMPCURSES_STATUS_LOOP,
+			loop_playlist ? XMPCURSES_STATUS_LOOP_PLAYLIST : ' ',
 
 			// time into module
 			(int)((frame_info.time / 100) / (60 * 600)),
@@ -195,6 +204,7 @@ int main(int argc, char **argv) {
 	if(exit == 1) break;
 	
 	}
+	if(loop_playlist == 1 && exit != 1) { optind = tracknum; goto player_loop;}
 
 	// we are done, free stuff
 	xmp_end_player(c);

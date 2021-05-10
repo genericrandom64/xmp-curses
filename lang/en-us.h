@@ -11,5 +11,6 @@
 #define XMPCURSES_INT_ERR "Internal error\n"
 #define XMPCURSES_STATUS_PAUSE 'P'
 #define XMPCURSES_STATUS_LOOP 'L'
+#define XMPCURSES_STATUS_LOOP_PLAYLIST 'R'
 
 #endif

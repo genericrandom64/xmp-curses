@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 	struct xmp_module_info module_info;
 
 	
-	while((opt = getopt(argc, argv, ":i:s:Llhm8u")) != -1) {
+	while((opt = getopt(argc, argv, ":i:s:LRlhm8u")) != -1) {
 		switch(opt) {
 			
 			/* use these flags if you hate yourself and want to die
@@ -196,16 +196,16 @@ player_loop:
 		mvaddstr(0, 0, statusbar);
 		refresh();
 		
-		if(exitloop == 1 ||  iexit == 1) break;
+		if(exitloop == 1 || iexit == 1) break;
 
 	}
 
+	if(iexit == 1) break;
 	optind++;
 	exitloop = 0;
-	if(iexit == 1) break;
 	
 	}
-	if(loop_playlist == 1 && iexit != 1) { optind = tracknum; goto player_loop;}
+	if(loop_playlist == 1 && iexit != 1) { optind = tracknum-1; goto player_loop;}
 
 	// we are done, free stuff
 	xmp_end_player(c);

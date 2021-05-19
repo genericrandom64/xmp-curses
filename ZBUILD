@@ -1,7 +1,11 @@
 NAME=xmp-curses
 SOURCE=main.c
-FLAGS="-O3 -lxmp -lcurses"
+FLAGS="-O3 -lxmp"
 
+# xcurses aint doing so good
+#FLAGS="$FLAGS -L/usr/lib -lXCurses -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -lX11 -lXt -lXau -lXmu -lXpm -lXaw -lICE -lXext -lSM"
+
+FLAGS="$FLAGS -lcurses"
 
 [ "$(uname)" = "Linux" ] && FLAGS="$FLAGS -lpulse-simple -flto"
 

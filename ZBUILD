@@ -13,3 +13,5 @@ FLAGS="$FLAGS -lcurses"
 # set up /usr/local flags and default to sndio.
 # TODO create conf generator
 [ "$(uname)" = "OpenBSD" ] && FLAGS="$FLAGS -lsndio -L/usr/local/lib -I/usr/local/include"
+
+[ "$(uname)" = "FreeBSD" ] && FLAGS="$FLAGS -lsndio -L/usr/local/lib -I/usr/local/include"

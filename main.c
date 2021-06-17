@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 	//char* buffer = malloc(SAMPLE_RATE);
 	char buffer[SAMPLE_RATE];
 	
-	int opt, player_flags = 0, input = 0, loop = 1, interp = XMP_INTERP_LINEAR, tracknum = 1;
+	int opt, player_flags = 0, input = 0, loop = 1, interp = XMP_INTERP_LINEAR, tracknum = 1, subsong = 0;
 	uint8_t sep = 70, pause = 0, exitloop = 0, iexit = 0, loop_playlist = 0;
 	
 	// set up libxmp
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 	struct xmp_module_info module_info;
 
 	
-	while((opt = getopt(argc, argv, ":i:s:LRlhm8u")) != -1) {
+	while((opt = getopt(argc, argv, ":i:s:z:LRlhm8u")) != -1) {
 		switch(opt) {
 			
 			/* use these flags if you hate yourself and want to die
@@ -88,6 +88,9 @@ int main(int argc, char **argv) {
 			case '?':
 				printf(XMPCURSES_UNKNOWN_ARG, optopt);
 				break;
+			case 'z':
+				subsong = atoi(optarg);
+				break;
 		}
 	}
 
@@ -112,6 +115,9 @@ int main(int argc, char **argv) {
 	xmp_start_player(c, SAMPLE_RATE, player_flags);
 	xmp_set_player(c, XMP_PLAYER_INTERP, interp);
 	xmp_set_player(c, XMP_PLAYER_MIX, sep);
+	subsong %= module_info.num_sequences;
+	frame_info.sequence = subsong;
+	xmp_set_position(c, module_info.seq_data[subsong].entry_point);
 
 	// player loop
 player_loop:

@@ -4,7 +4,9 @@
 
 // choose a backend
 // the first one defined will be used
-#include "backend/pulseaudio.h"
+#ifdef XC_WANT_BACKEND
+#include "backend/BACKENDSEL.h"
+#endif
 
 // keybinds
 
@@ -20,3 +22,5 @@
 
 #define XMPCURSES_POS_NEXT 'l'
 #define XMPCURSES_POS_PREV 'h'
+
+#define SHM "/xmp-curses.shm"

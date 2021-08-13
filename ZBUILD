@@ -7,11 +7,11 @@ FLAGS="-O3 -lxmp"
 
 FLAGS="$FLAGS -lcurses"
 
-[ "$(uname)" = "Linux" ] && FLAGS="$FLAGS -lpulse-simple -flto"
+[ "$(uname)" = "Linux" ] && FLAGS="$FLAGS -lpulse-simple -flto -lrt"
 
 # openbsd clang doesnt like lto for whatever reason
 # set up /usr/local flags and default to sndio.
 # TODO create conf generator
 [ "$(uname)" = "OpenBSD" ] && FLAGS="$FLAGS -lsndio -L/usr/local/lib -I/usr/local/include"
 
-[ "$(uname)" = "FreeBSD" ] && FLAGS="$FLAGS -lsndio -L/usr/local/lib -I/usr/local/include"
+[ "$(uname)" = "FreeBSD" ] && FLAGS="$FLAGS -lsndio -L/usr/local/lib -I/usr/local/include -lrt"

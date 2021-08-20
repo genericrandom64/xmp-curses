@@ -196,10 +196,10 @@ int main(int argc, char **argv) {
 					memcpy(serverctl + 1, statusbar, 20);
 				} else if(serverctl[0] == 8) {
 					munmap(serverctl, mapsize);
-					mapsize = 4+strlen(MODULE);
+					mapsize = 2+strlen(MODULE);
 					ftruncate(serverfd, mapsize);
 					serverctl = mmap(NULL, mapsize, PROT_READ | PROT_WRITE, MAP_SHARED, serverfd, 0);
-					memcpy(serverctl + 1, MODULE, strlen(MODULE));
+					memcpy(serverctl + 1, MODULE, strlen(MODULE) + 1);
 				} else if(serverctl[0] == 9) {
 					munmap(serverctl, mapsize);
 					fstat(serverfd, &srvstat);

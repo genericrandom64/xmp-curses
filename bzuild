@@ -1,0 +1,45 @@
+#!/bin/sh
+###################################
+#
+# bzuild: the zbuild you can use on openbsd
+#
+# Adapted from zbuild by genericrandom64.
+# Public domain.
+# Simple wrapper for c/c++ compilers (zbuild compatible).
+#
+###################################
+
+is_func() {
+	LC_ALL=C type $1 2>&1 | grep -q 'function'
+}
+
+[ -z "$CC" ] && CC=cc
+
+. ./ZBUILD
+
+[ -z "$SOURCE" ] && echo "missing \$SOURCE in ZBUILD" && exit 1
+
+[ "$NAME" = "" ] && echo "missing \$NAME in ZBUILD" && exit 1
+
+[ ! -z "$1" ] && echo Using target $1 if present &&
+	is_func $1 &&
+	$1
+
+start=`date +%s`
+$CC $SOURCE $FLAGS $BZCFLAGS -o $NAME 2> /tmp/$NAME.err.cc
+RET=$?
+TIME=`echo "$(date +%s) - $start" | bc`
+
+cat /tmp/$NAME".err.cc" | grep -E 'error|warning' | sed 's/error: //g;s/$/\n/;s/: /:\n/;' > $NAME.err.cc
+
+if [ "$RET" = "0" ]; then
+	echo "-- Compiled $NAME. ($TIME s) --"
+	[ -z "$BZUILD_DISABLE_AUTORUN" ] && stat ./$NAME 2>&1 > /dev/null && ./$NAME
+	[ -z "$BZUILD_KEEP_UNFORMATTED_LOG" ] && rm /tmp/$NAME.err.cc
+else
+	echo "-- Failed. --"
+fi
+
+[ ! -z "$BZUILD_SHOW_CC_OUTPUT" ] && cat /tmp/$NAME.err.cc
+
+exit 0

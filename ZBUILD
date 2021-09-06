@@ -1,17 +1,18 @@
 NAME=xmp-curses
 SOURCE=main.c
-FLAGS="-O3 -lxmp"
+FLAGS="-O3 -lxmp -lcurses"
 
-# xcurses aint doing so good
-#FLAGS="$FLAGS -L/usr/lib -lXCurses -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -lX11 -lXt -lXau -lXmu -lXpm -lXaw -lICE -lXext -lSM"
-
-FLAGS="$FLAGS -lcurses"
+[ ! -f config.h ] && echo no config! creating one now. && ./genconfig
 
 [ "$(uname)" = "Linux" ] && FLAGS="$FLAGS -lpulse-simple -flto -lrt"
 
 # openbsd clang doesnt like lto for whatever reason
 # set up /usr/local flags and default to sndio.
-# TODO create conf generator
 [ "$(uname)" = "OpenBSD" ] && FLAGS="$FLAGS -lsndio -L/usr/local/lib -I/usr/local/include"
-
 [ "$(uname)" = "FreeBSD" ] && FLAGS="$FLAGS -lsndio -L/usr/local/lib -I/usr/local/include -lrt"
+
+cmd() {
+	SOURCE=xmpcmd.c
+	NAME=xmpcmd
+	FLAGS=-lrt
+}

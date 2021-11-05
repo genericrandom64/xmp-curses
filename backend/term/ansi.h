@@ -3,6 +3,7 @@
 
 #define termend() printf("\033[?25h\033[?1049l\033[23;0;0t")
 #define terminit() printf("\033[?1049h\033[22;0;0t\033[?25l\x1B\x5B\x48\x1B\x5B\x4A")
-
+#define termret() printf("\033[1;1H%s", statusbar);
+#define termerr() printf("\033[1;4H");
 
 #endif

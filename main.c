@@ -159,7 +159,8 @@ int main(int argc, char **argv) {
 
 		//printf("want module q%i (%s)\n", queue_index, MODULE);
 		if(xmp_load_module(c, MODULE) != 0) {
-			printf("%s" XMPCURSES_LOAD_FAIL, noout ? "" : "\033[1;4H");
+			if(!noout) termerr();
+			printf(XMPCURSES_LOAD_FAIL);
 			queue_index++;
 			continue;
 		}
@@ -267,7 +268,7 @@ int main(int argc, char **argv) {
 			        (int)(((frame_info.time / 100) / 10) % 60)
 			       );
 
-			if(!noout) printf("\033[1;1H%s", statusbar);
+			if(!noout) termret();
 
 			if(exitloop == 1 || iexit == 1) break;
 

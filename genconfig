@@ -1,4 +1,4 @@
 AUDIOBACKEND="pulseaudio"
 [ "$(uname)" = "OpenBSD" ] && AUDIOBACKEND=sndio
 [ "$(uname)" = "FreeBSD" ] && AUDIOBACKEND=sndio
-sed "s/BACKENDSEL/$AUDIOBACKEND/" config-template.h > config.h
+sed "s/AUDIOSEL/$AUDIOBACKEND/;s/TERMSEL/ansi/g" config-template.h > config.h

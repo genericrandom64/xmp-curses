@@ -14,17 +14,27 @@
 #include <errno.h>
 #include <termios.h>
 
+/* TODO
+ * move all terminal stuff to a separate file
+ * there is... quite a bit of code to clean up lmao
+ */
+
 #define SAMPLE_RATE 44100
 #define MODULE queue[queue_index]
 
-#define XC_WANT_BACKEND
+#define XC_WANT_BACKEND_AUDIO
+#define XC_WANT_BACKEND_TERM
 #include "config.h"
 
 #ifndef XC_LANG
 #error "No language selected in config.h?"
 #endif
 
-#ifndef XC_BACKEND
+#ifndef XC_BACKEND_TERM
+#error "No terminal backend selected in config.h?"
+#endif
+
+#ifndef XC_BACKEND_AUDIO
 #error "No audio backend selected in config.h?"
 #endif
 
@@ -32,7 +42,7 @@ uint8_t server = 0, noout = 0;
 
 void sighandle(int sig) {
 	if(server) shm_unlink(SHM);
-	if(!noout) printf("\033[?25h\n");
+	if(!noout) termend();
 	exit(sig >> 8);
 }
 
@@ -136,7 +146,7 @@ int main(int argc, char **argv) {
 
 //	initscr();
 //	clear();
-	if(!noout) printf("\033[?25l\x1B\x5B\x48\x1B\x5B\x4A");
+	if(!noout) terminit();
 
 	struct termios t;
 	fcntl(0, F_SETFL, O_NONBLOCK);

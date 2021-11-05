@@ -1,5 +1,5 @@
-#ifndef XC_BACKEND
-#define XC_BACKEND
+#ifndef XC_BACKEND_AUDIO
+#define XC_BACKEND_AUDIO
 
 #include <sndio.h>
 

@@ -4,8 +4,14 @@
 
 // choose a backend
 // the first one defined will be used
-#ifdef XC_WANT_BACKEND
-#include "backend/BACKENDSEL.h"
+#ifdef XC_WANT_BACKEND_AUDIO
+#include "backend/audio/AUDIOSEL.h"
+#endif
+
+// choose a terminal backend
+// the first one defined will be used
+#ifdef XC_WANT_BACKEND_TERM
+#include "backend/term/TERMSEL.h"
 #endif
 
 // keybinds

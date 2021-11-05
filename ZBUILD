@@ -1,6 +1,6 @@
 NAME=xmp-curses
 SOURCE=main.c
-FLAGS="-O3 -lxmp -lcurses"
+FLAGS="-O3 -lxmp"
 
 [ ! -f config.h ] && echo no config! creating one now. && ./genconfig
 

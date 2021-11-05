@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <curses.h>
 #include <string.h>
 #include <assert.h>
 #include <errno.h>
@@ -29,20 +28,17 @@
 #error "No audio backend selected in config.h?"
 #endif
 
-uint8_t server = 0;
-
-void die(char * msg, int ret) {
-	clear();
-	refresh();
-	endwin();
-	printf(msg);
-	if(server) shm_unlink(SHM);
-	exit(ret);
-}
+uint8_t server = 0, noout = 0;
 
 void sighandle(int sig) {
 	if(server) shm_unlink(SHM);
-	exit(endwin());
+	if(!noout) printf("\033[?25h\n");
+	exit(sig >> 8);
+}
+
+void die(char * msg, int ret) {
+	printf(msg);
+	sighandle(0);
 }
 
 int main(int argc, char **argv) {
@@ -62,7 +58,7 @@ int main(int argc, char **argv) {
 	struct xmp_module_info module_info;
 
 
-	while((opt = getopt(argc, argv, ":i:s:z:LRDlhm8uF")) != -1) {
+	while((opt = getopt(argc, argv, ":i:s:z:LRDlhm8uFN")) != -1) {
 		switch(opt) {
 
 		/* use these flags if you hate yourself and want to die
@@ -110,6 +106,9 @@ int main(int argc, char **argv) {
 		case 'D':
 			server = 1;
 			break;
+		case 'N':
+			noout = 1;
+			break;
 		}
 	}
 
@@ -135,9 +134,9 @@ int main(int argc, char **argv) {
 
 	backend_init;
 
-	initscr();
-	clear();
-	curs_set(0);
+//	initscr();
+//	clear();
+	if(!noout) printf("\033[?25l\x1B\x5B\x48\x1B\x5B\x4A");
 
 	struct termios t;
 	fcntl(0, F_SETFL, O_NONBLOCK);
@@ -150,7 +149,7 @@ int main(int argc, char **argv) {
 
 		//printf("want module q%i (%s)\n", queue_index, MODULE);
 		if(xmp_load_module(c, MODULE) != 0) {
-			mvaddstr(4, 0, XMPCURSES_LOAD_FAIL);
+			printf("%s" XMPCURSES_LOAD_FAIL, noout ? "" : "\033[1;4H");
 			queue_index++;
 			continue;
 		}
@@ -258,8 +257,7 @@ int main(int argc, char **argv) {
 			        (int)(((frame_info.time / 100) / 10) % 60)
 			       );
 
-			mvaddstr(0, 0, statusbar);
-			refresh();
+			if(!noout) printf("\033[1;1H%s", statusbar);
 
 			if(exitloop == 1 || iexit == 1) break;
 
@@ -276,18 +274,13 @@ int main(int argc, char **argv) {
 		goto player_loop;
 	}
 
-	// we are done, free stuff
-	if(server) shm_unlink(SHM);
+	// we are done, free stuff and exit
 	xmp_end_player(c);
 	xmp_release_module(c);
 	xmp_free_context(c);
 	for(int i = 0; i < queue_size; i++) free(queue[i]);
 	free(queue);
 	backend_free;
-
-	// we are done with ncurses
-	endwin();
-
-	return 0;
+	sighandle(0);
 
 }

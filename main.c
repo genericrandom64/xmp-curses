@@ -144,16 +144,7 @@ int main(int argc, char **argv) {
 
 	backend_init;
 
-//	initscr();
-//	clear();
 	if(!noout) terminit();
-
-	struct termios t;
-	fcntl(0, F_SETFL, O_NONBLOCK);
-	tcgetattr(0, &t);
-	t.c_lflag &= ~ICANON;
-	t.c_lflag &= ~ECHO;
-	tcsetattr(0, TCSANOW, &t);
 
 	while(queue_index < queue_size) {
 
